@@ -1,15 +1,13 @@
 package search
+
 import (
-	"os"
-	"fmt"
-	"bufio"
-	"io/ioutil"
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"os"
 )
 
-
 type Loaded struct {
-
 }
 
 func NewLoaded(filename string) (*Loaded, error) {
@@ -29,5 +27,6 @@ func NewLoaded(filename string) (*Loaded, error) {
 	if err != nil {
 		return nil, err
 	}
-	json.Unmarshal(filebytes, )
+
+	//err = json.Unmarshal(filebytes, )
 }

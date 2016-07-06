@@ -2,7 +2,7 @@ package gather
 
 type Reducer struct {
 	inbound chan *Unit
-	sums *Reduction
+	sums    *Reduction
 }
 
 func NewReducer(inbound chan *Unit) *Reducer {
@@ -10,7 +10,7 @@ func NewReducer(inbound chan *Unit) *Reducer {
 		inbound: inbound,
 		sums: &Reduction{
 			ExtCount: make(map[string]int),
-			Units: make([]*Unit, 0),
+			Units:    make([]*Unit, 0),
 		},
 	}
 }

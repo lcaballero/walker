@@ -1,11 +1,12 @@
 package gather
+
 import (
 	"fmt"
-	"sync"
-	"path/filepath"
-	"os"
-	"runtime"
 	"github.com/lcaballero/time-capture/bench"
+	"os"
+	"path/filepath"
+	"runtime"
+	"sync"
 )
 
 var PartiallyAvailableReceiversError = fmt.Errorf("Less than all receivers available.")
@@ -14,14 +15,14 @@ var AllReceiversUnavailableError = fmt.Errorf("No recievers available.")
 type Walker struct {
 	walkedPaths chan *Unit
 	loadedPaths chan *Unit
-	wait *sync.WaitGroup
-	total int
+	wait        *sync.WaitGroup
+	total       int
 }
 
 func NewWalker() *Walker {
 	return &Walker{
 		loadedPaths: make(chan *Unit, 100),
-		wait: &sync.WaitGroup{},
+		wait:        &sync.WaitGroup{},
 	}
 }
 
@@ -47,7 +48,7 @@ func (w *Walker) Walk(root string) error {
 	reducer.sums.CpuCount = runtime.NumCPU()
 	reducer.sums.GoRountineCount = fr.maxReaders
 	reducer.sums.ReductionTime = tc
-	reducer.sums.ExtensionsSkipped = []string{ ".tgz" }
+	reducer.sums.ExtensionsSkipped = []string{".tgz"}
 	reducer.sums.Report()
 
 	reducer.sums.Write()
@@ -59,9 +60,9 @@ func (w *Walker) Handle(path string, info os.FileInfo) error {
 	w.total++
 	w.wait.Add(1)
 	w.walkedPaths <- &Unit{
-		Path: path,
+		Path:  path,
 		IsDir: info.IsDir(),
-		Ext: filepath.Ext(path),
+		Ext:   filepath.Ext(path),
 	}
 	return nil
 }
@@ -72,6 +73,3 @@ func (w *Walker) Walking(path string, info os.FileInfo, err error) error {
 	}
 	return w.Handle(path, info)
 }
-
-
-

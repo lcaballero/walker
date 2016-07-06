@@ -1,17 +1,17 @@
 package gather
 
 import (
-	"io/ioutil"
 	"fmt"
+	"io/ioutil"
 	"sync"
 )
 
 type FileReader struct {
-	inbound chan *Unit
+	inbound    chan *Unit
 	maxReaders int
-	outbound chan *Unit
-	done func()
-	closed func()
+	outbound   chan *Unit
+	done       func()
+	closed     func()
 }
 
 func NewFileReader(
@@ -21,8 +21,8 @@ func NewFileReader(
 
 	fr := &FileReader{
 		maxReaders: maxReaders,
-		outbound: outbound,
-		done: done,
+		outbound:   outbound,
+		done:       done,
 	}
 	return fr
 }

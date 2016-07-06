@@ -19,15 +19,12 @@ func InterestingGoroutines() (gs []string) {
 		}
 		stack := strings.TrimSpace(sl[1])
 		isNotInteresting :=
-		stack == "" ||
-		strings.Contains(stack, "runtime.goexit") ||
-		strings.Contains(stack, ".InterestingGoroutines") ||
-		strings.Contains(stack, "behavior_asynclooplogger") ||
-		strings.Contains(stack, "resolver/resolver") ||
-		strings.Contains(stack, "accumulator/accumulator") ||
-		strings.Contains(stack, "os/signal.loop()") ||
-		strings.Contains(stack, "bounce.go") ||
-		strings.Contains(stack, "(*Clipboard).bundleCountersForAccumulator")
+			stack == "" ||
+				strings.Contains(stack, "runtime.goexit") ||
+				strings.Contains(stack, ".InterestingGoroutines") ||
+				strings.Contains(stack, "behavior_asynclooplogger") ||
+				strings.Contains(stack, "os/signal.loop()") ||
+				strings.Contains(stack, "bounce.go")
 
 		if isNotInteresting {
 			continue
@@ -62,6 +59,3 @@ func GoroutinesLeaked() bool {
 	}
 	return true
 }
-
-
-
