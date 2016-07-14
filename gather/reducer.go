@@ -1,30 +1,40 @@
 package gather
 
+// Reducer listens on the inbound channel and collects Units of processed work.
 type Reducer struct {
 	inbound chan *Unit
-	sums *Reduction
+	sums    *Reduction
 }
 
+// NewReducer allocates a reducer listening on the inbound channel.
 func NewReducer(inbound chan *Unit) *Reducer {
 	return &Reducer{
 		inbound: inbound,
 		sums: &Reduction{
 			ExtCount: make(map[string]int),
-			Units: make([]*Unit, 0),
+			Units:    make([]*Unit, 0),
 		},
 	}
 }
 
+// Start returns a finished signal channel which indicates to the reducer
+// that ALL sub-jobs finished their tasks.
 func (w *Reducer) Start() chan bool {
 	sums := w.sums
 	finishedReading := make(chan bool)
-	wrapItUp := false
+	complete := make(chan bool, 1)
 
 	go func() {
 		for {
 			select {
 
-			case wrapItUp = <-finishedReading:
+			case <-complete:
+				close(finishedReading)
+				close(complete)
+				return
+
+			case wrapItUp := <-finishedReading:
+				complete <- wrapItUp
 
 			case p := <-w.inbound:
 				sums.Units = append(sums.Units, p)
@@ -41,11 +51,6 @@ func (w *Reducer) Start() chan bool {
 					sums.DirsFound++
 				} else {
 					sums.FilePathsCollected++
-				}
-
-			default:
-				if wrapItUp {
-					return
 				}
 			}
 		}

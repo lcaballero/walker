@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/lcaballero/walker/gather"
+	"github.com/lcaballero/walker/start"
 )
 
 func main() {
-	gather.NewWalker().Walk(".files/inbound")
+	start.Start()
 }

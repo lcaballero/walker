@@ -1,26 +1,27 @@
 package gather
+
 import (
-	"github.com/lcaballero/walker/shared/checks"
+	"encoding/json"
 	"fmt"
+	"github.com/lcaballero/time-capture/bench"
+	"github.com/lcaballero/walker/shared/checks"
+	"io/ioutil"
 	"os"
 	"strings"
-	"github.com/lcaballero/time-capture/bench"
-	"encoding/json"
-	"io/ioutil"
 )
 
 type Reduction struct {
-	ExtCount map[string]int
-	Units []*Unit
-	FilesRead int
-	PathsWalked int
+	ExtCount           map[string]int
+	Units              []*Unit
+	FilesRead          int
+	PathsWalked        int
 	FilePathsCollected int
-	SkippedReading int
-	DirsFound int
-	ExtensionsSkipped []string
-	GoRountineCount int
-	CpuCount int
-	ReductionTime *bench.TimeCapture
+	SkippedReading     int
+	DirsFound          int
+	ExtensionsSkipped  []string
+	GoRountineCount    int
+	CpuCount           int
+	ReductionTime      *bench.TimeCapture
 }
 
 func (w *Reduction) Report() {
@@ -34,10 +35,10 @@ func (w *Reduction) Report() {
 	fmt.Println("Total Directories Found: ", w.DirsFound)
 	fmt.Println()
 	fmt.Println("Extensions Collected: ", len(w.ExtCount))
-//	fmt.Println()
-//	for k,v := range w.ExtCount {
-//		fmt.Printf("ext: %s, count: %d\n", k, v)
-//	}
+	//	fmt.Println()
+	//	for k,v := range w.ExtCount {
+	//		fmt.Printf("ext: %s, count: %d\n", k, v)
+	//	}
 	fmt.Println()
 
 	w.ReductionTime.Out(os.Stdout)

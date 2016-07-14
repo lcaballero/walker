@@ -1,17 +1,17 @@
 package gather
 
 import (
-	"io/ioutil"
 	"fmt"
+	"io/ioutil"
 	"sync"
 )
 
 type FileReader struct {
-	inbound chan *Unit
+	inbound    chan *Unit
 	maxReaders int
-	outbound chan *Unit
-	done func()
-	closed func()
+	outbound   chan *Unit
+	done       func()
+	closed     func()
 }
 
 func NewFileReader(
@@ -21,8 +21,8 @@ func NewFileReader(
 
 	fr := &FileReader{
 		maxReaders: maxReaders,
-		outbound: outbound,
-		done: done,
+		outbound:   outbound,
+		done:       done,
 	}
 	return fr
 }
@@ -44,6 +44,8 @@ func (fr *FileReader) filter(unit *Unit) bool {
 	}
 }
 
+// readFile takes the id (number) of the thread, a inbound channel to receive
+// new Units and an outbound chanel to send processed Units on.
 func (fr *FileReader) readFile(id int, inbound <-chan *Unit, outbound chan<- *Unit) {
 	for unit := range inbound {
 
@@ -76,10 +78,12 @@ func (fr *FileReader) readFile(id int, inbound <-chan *Unit, outbound chan<- *Un
 	fr.finished(id)
 }
 
+// finished() is called to close down the inbound channel exiting for loop.
 func (fr *FileReader) finished(id int) {
 	fr.closed()
 }
 
+// Close signals closed on all routinest
 func (fr *FileReader) Close() error {
 	wg := sync.WaitGroup{}
 	wg.Add(fr.maxReaders)

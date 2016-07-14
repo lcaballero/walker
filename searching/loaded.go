@@ -1,15 +1,12 @@
-package search
+package searching
+
 import (
-	"os"
 	"fmt"
-	"bufio"
 	"io/ioutil"
-	"encoding/json"
+	"os"
 )
 
-
 type Loaded struct {
-
 }
 
 func NewLoaded(filename string) (*Loaded, error) {
@@ -29,5 +26,7 @@ func NewLoaded(filename string) (*Loaded, error) {
 	if err != nil {
 		return nil, err
 	}
-	json.Unmarshal(filebytes, )
+	//	json.Unmarshal(filebytes, )
+	fmt.Println(filebytes)
+	return nil, err
 }

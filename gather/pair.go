@@ -1,7 +1,6 @@
 package gather
 
 type Pair struct {
-	ext string
+	ext   string
 	count int
 }
-
