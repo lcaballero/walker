@@ -26,6 +26,7 @@ func NewLoaded(filename string) (*Loaded, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	//	json.Unmarshal(filebytes, )
 	fmt.Println(filebytes)
 	return nil, err

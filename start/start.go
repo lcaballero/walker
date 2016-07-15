@@ -3,10 +3,9 @@ package start
 import (
 	"fmt"
 	"github.com/lcaballero/walker/cli"
-	"github.com/lcaballero/walker/gather"
-	"os"
 	"github.com/lcaballero/walker/indexing"
 	"github.com/lcaballero/walker/searching"
+	"os"
 )
 
 func Start() {
