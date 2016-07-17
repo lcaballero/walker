@@ -15,7 +15,11 @@ func Start() {
 		fmt.Println("indexing...")
 		indexing.Indexing(conf)
 	case "searching":
-		searching.NewLoaded(conf.Filename)
+		s, err := searching.Search(conf)
+		if err != nil {
+			panic(err)
+		}
+		s.Start()
 		fmt.Println("searching...")
 	default:
 		fmt.Println("default indexing")

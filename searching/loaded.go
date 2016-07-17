@@ -1,15 +1,14 @@
 package searching
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/lcaballero/walker/gather"
 	"io/ioutil"
 	"os"
 )
 
-type Loaded struct {
-}
-
-func NewLoaded(filename string) (*Loaded, error) {
+func LoadReduction(filename string) (*gather.Reduction, error) {
 	info, err := os.Stat(filename)
 	if os.IsNotExist(err) {
 		return nil, err
@@ -27,7 +26,10 @@ func NewLoaded(filename string) (*Loaded, error) {
 		return nil, err
 	}
 
-	//	json.Unmarshal(filebytes, )
-	fmt.Println(filebytes)
-	return nil, err
+	aggr := &gather.Reduction{}
+	err = json.Unmarshal(filebytes, aggr)
+	if err != nil {
+		return nil, err
+	}
+	return aggr, err
 }
