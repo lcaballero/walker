@@ -2,17 +2,15 @@ package searching
 
 import (
 	"errors"
-	"fmt"
 	"github.com/lcaballero/walker/gather"
 )
 
 var IndexNotFoundInLines = errors.New("Couldn't find line")
 
 type HitBounds struct {
-	Start     int
-	End       int
-	Width     int
-	Unit      *gather.Unit
+	Start int
+	End   int
+	Unit  *gather.Unit
 }
 
 func NewHitBounds(start, end int, unit *gather.Unit) HitBounds {
@@ -20,49 +18,13 @@ func NewHitBounds(start, end int, unit *gather.Unit) HitBounds {
 		Start: start,
 		End:   end,
 		Unit:  unit,
-		Width: 30,
 	}
 	return hit
 }
 
-func (h HitBounds) String() string {
-	line, err := h.FindLine()
-	if err != nil {
-		return ""
-	}
-
-	left := Max(line.Start, h.Start-h.Width)
-	right := Min(line.End, h.End+h.Width)
-
-	if h.Unit.Content[left] == '\n' {
-		left += 1
-	}
-	if h.Unit.Content[right-1] == '\n' {
-		right -= 1
-	}
-
-	result := fmt.Sprintf("%s %s",
-		h.lead(line.Number),
-		h.window(line.Number, left, right))
-
-	return result
-}
-
-func (h HitBounds) match() string {
-	return string(h.Unit.Content[h.Start:h.End])
-}
-
-func (h HitBounds) window(line, left, right int) string {
-	return string(h.Unit.Content[left:right])
-}
-
-func (h HitBounds) lead(line int) string {
-	return fmt.Sprintf("[%d:%d,%d]", line, h.Start, h.End)
-}
-
 func (h HitBounds) FindLine() (gather.Line, error) {
-	a := 0;
-	b := h.Unit.LineCount();
+	a := 0
+	b := h.Unit.LineCount()
 	mid := (b - a) / 2
 
 	// Case: we have only one line.
@@ -72,7 +34,7 @@ func (h HitBounds) FindLine() (gather.Line, error) {
 			return gather.Line{}, err
 		}
 		if line.HasIndex(h.Start) {
-			return gather.Line{Number:1}, nil
+			return gather.Line{Number: 1}, nil
 		} else {
 			return gather.Line{}, errors.New("Couldn't locate line based on hit start point")
 		}

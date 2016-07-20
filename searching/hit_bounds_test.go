@@ -1,10 +1,10 @@
 package searching
-import (
-	"testing"
-	"github.com/lcaballero/walker/gather"
-	. "github.com/lcaballero/exam/assert"
-)
 
+import (
+	. "github.com/lcaballero/exam/assert"
+	"github.com/lcaballero/walker/gather"
+	"testing"
+)
 
 func NewUnit(content string) *gather.Unit {
 	u := &gather.Unit{
@@ -16,8 +16,8 @@ func NewUnit(content string) *gather.Unit {
 func NewBounds(a, b int, text string) *HitBounds {
 	return &HitBounds{
 		Start: a,
-		End: b,
-		Unit: NewUnit(text),
+		End:   b,
+		Unit:  NewUnit(text),
 	}
 }
 
@@ -34,7 +34,6 @@ c
 
 `
 
-
 func Test_HitBound_002(t *testing.T) {
 	h := NewBounds(11, 13, BaseText)
 
@@ -50,8 +49,8 @@ func Test_HitBound_002(t *testing.T) {
 func Test_HitBounds_001(t *testing.T) {
 	h := HitBounds{
 		Start: 0,
-		End: 0,
-		Unit: NewUnit(""),
+		End:   0,
+		Unit:  NewUnit(""),
 	}
 	line, err := h.FindLine()
 

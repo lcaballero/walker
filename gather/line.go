@@ -1,8 +1,8 @@
 package gather
 
 type Line struct {
-	Start int
-	End int
+	Start  int
+	End    int
 	Number int
 }
 

@@ -34,17 +34,22 @@ func (u *Unit) FindLines() (Lines, error) {
 	}
 
 	// Case: File has minimum of 1 line.
-	start := 0; i := 0; n := 1
+	start := 0
+	i := 0
+	n := 1
 
 	if u.Content[i] == '\n' {
-		lines = append(lines, Line{start, i+1, n})
-		i++; n++; start = i
+		lines = append(lines, Line{start, i + 1, n})
+		i++
+		n++
+		start = i
 	}
 
 	for ; i < len(u.Content); i++ {
 		if u.Content[i] == '\n' {
-			lines = append(lines, Line{start, i+1, n})
-			n++; start = i + 1
+			lines = append(lines, Line{start, i + 1, n})
+			n++
+			start = i + 1
 			continue
 		}
 	}
