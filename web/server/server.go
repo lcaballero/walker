@@ -10,6 +10,7 @@ import (
 	"github.com/lcaballero/walker/searching"
 	"log"
 	"github.com/labstack/echo"
+	"fmt"
 )
 
 type WebServer struct {
@@ -49,15 +50,20 @@ func (w *WebServer) run() {
 
 	r := base.NewRegister()
 	r.Get("/asset/:kind/:hash/:file", ctx.ToHandler())
-	r.Get("/searching", Index(ctx, w.searcher))
+	r.Get("/searching", Index(ctx, *w.Config, w.searcher))
 
 	log.Printf("starting web server at: %s", w.Ip)
+	log.Println(w.Config.String())
 	r.Echo.Run(standard.New(w.Ip))
 }
 
-func Index(ctx *app.Context, searcher *searching.Searcher) echo.HandlerFunc {
+func Index(ctx *app.Context, cfg conf.Config, searcher *searching.Searcher) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		q := c.QueryParam("q")
-		return searcher.Query(c.Response().Writer(), q)
+		cfg.Query = c.QueryParam("q")
+		cfg.ShowFontLocks = c.QueryParam("show-fonts") != ""
+		cfg.ShowQuery = c.QueryParam("show-query") != ""
+
+		fmt.Printf("Searching for: %s\n", cfg.Query)
+		return searcher.Query(c.Response().Writer(), cfg)
 	}
 }

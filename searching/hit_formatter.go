@@ -44,5 +44,5 @@ func (h HitFormatter) window(line, left, right int) string {
 func (h HitFormatter) lead(start, end int, line gather.Line) string {
 	a := start - line.Start
 	b := end - line.Start
-	return fmt.Sprintf("%6d %2d:%2d", line.Number, a, b)
+	return fmt.Sprintf("%6d %2d:%2d | ", line.Number, a, b)
 }

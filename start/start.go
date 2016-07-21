@@ -21,7 +21,7 @@ func Start() {
 			panic(err)
 		}
 		if conf.HasQuery() {
-			s.Query(os.Stdout, conf.Query)
+			s.Query(os.Stdout, *conf)
 		} else {
 			s.Start()
 			fmt.Println("searching...")
