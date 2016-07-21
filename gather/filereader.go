@@ -7,11 +7,12 @@ import (
 )
 
 type FileReader struct {
-	inbound    chan *Unit
-	maxReaders int
-	outbound   chan *Unit
-	done       func()
-	closed     func()
+	inbound     chan *Unit
+	maxReaders  int
+	outbound    chan *Unit
+	done        func()
+	closed      func()
+	filteredExt []string
 }
 
 func NewFileReader(
@@ -36,12 +37,12 @@ func (fr *FileReader) Start() chan *Unit {
 }
 
 func (fr *FileReader) filter(unit *Unit) bool {
-	switch unit.Ext {
-	case ".tgz":
-		return true
-	default:
-		return false
+	for _, ext := range fr.filteredExt {
+		if ext == unit.Ext {
+			return true
+		}
 	}
+	return false
 }
 
 // readFile takes the id (number) of the thread, a inbound channel to receive

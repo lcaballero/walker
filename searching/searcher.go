@@ -6,10 +6,10 @@ import (
 	"github.com/lcaballero/walker/conf"
 	"github.com/lcaballero/walker/gather"
 	"github.schq.secious.com/Logrhythm/GoDispatch/bench"
+	"io"
 	"os"
 	"regexp"
 	"strings"
-	"io"
 )
 
 type Searcher struct {

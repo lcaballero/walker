@@ -11,6 +11,10 @@ import (
 
 var PartiallyAvailableReceiversError = fmt.Errorf("Less than all receivers available.")
 var AllReceiversUnavailableError = fmt.Errorf("No recievers available.")
+var DefaultFilteredExtensions = []string{
+	".tgz", ".zip", ".png", ".gif", ".bz2",
+	".jpg", ".jpeg", ".bmp", ".tar", ".gz",
+}
 
 // A Walker traverses the file-system and produces Unit's which composed of
 // fields that are common to Files.   These unit can be filtered out of the
@@ -42,6 +46,7 @@ func (w *Walker) Walk(root string) error {
 	wrapUp := reducer.Start()
 
 	fr := NewFileReader(runtime.NumCPU(), w.wait.Done, w.loadedPaths)
+	fr.filteredExt = DefaultFilteredExtensions
 	w.walkedPaths = fr.Start()
 
 	err := filepath.Walk(root, w.Walking)
@@ -54,13 +59,17 @@ func (w *Walker) Walk(root string) error {
 	fr.Close()
 	tc.Stop()
 
+	cwd, err := os.Getwd()
+	reducer.sums.AbsoluteRoot = cwd
+	reducer.sums.IndexingRoot = root
 	reducer.sums.PathsWalked = w.total
 	reducer.sums.CpuCount = runtime.NumCPU()
 	reducer.sums.GoRountineCount = fr.maxReaders
 	reducer.sums.ReductionTime = tc
-	reducer.sums.ExtensionsSkipped = []string{".tgz"}
+	reducer.sums.ExtensionsSkipped = fr.filteredExt
 	reducer.sums.Report() // output to standard out
-	reducer.sums.Write()  // make file of the collected information.
+	reducer.sums.Out(os.Stdout)
+	reducer.sums.Write() // make file of the collected information.
 
 	return nil
 }
@@ -71,10 +80,12 @@ func (w *Walker) Walk(root string) error {
 func (w *Walker) Handle(path string, info os.FileInfo) error {
 	w.total++
 	w.wait.Add(1)
+
 	w.walkedPaths <- &Unit{
 		Path:  path,
 		IsDir: info.IsDir(),
 		Ext:   filepath.Ext(path),
+		Size:  info.Size(),
 	}
 	return nil
 }

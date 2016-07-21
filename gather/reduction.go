@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/lcaballero/time-capture/bench"
 	"github.com/lcaballero/walker/shared/checks"
+	"io"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -22,6 +23,9 @@ type Reduction struct {
 	GoRountineCount    int
 	CpuCount           int
 	ReductionTime      *bench.TimeCapture
+
+	IndexingRoot string
+	AbsoluteRoot string
 }
 
 func (w *Reduction) Report() {
@@ -56,4 +60,17 @@ func (w *Reduction) Write() {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func (w *Reduction) Out(out io.Writer) {
+	r := *w
+	r.Units = nil
+
+	bb, err := json.MarshalIndent(&r, "", "  ")
+	if err != nil {
+		fmt.Fprintln(out, err)
+		return
+	}
+	fmt.Fprintln(out, string(bb))
+	return
 }

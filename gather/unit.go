@@ -15,6 +15,7 @@ type Unit struct {
 	IsDir     bool
 	Error     error
 	IsSkipped bool
+	Size      int64
 	lines     Lines // Offset to line starts in the Content
 }
 

@@ -1,16 +1,16 @@
 package server
 
 import (
+	"fmt"
+	"github.com/labstack/echo"
 	"github.com/labstack/echo/engine/standard"
 	"github.com/lcaballero/gel"
 	"github.com/lcaballero/hitman"
-	app "github.com/lcaballero/walker/web/context"
 	"github.com/lcaballero/reverb/base"
 	"github.com/lcaballero/walker/conf"
 	"github.com/lcaballero/walker/searching"
+	app "github.com/lcaballero/walker/web/context"
 	"log"
-	"github.com/labstack/echo"
-	"fmt"
 )
 
 type WebServer struct {

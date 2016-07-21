@@ -23,7 +23,7 @@ func InterestingGoroutines() (gs []string) {
 				strings.Contains(stack, "runtime.goexit") ||
 				strings.Contains(stack, ".InterestingGoroutines") ||
 				strings.Contains(stack, "os/signal.loop()") ||
-				strings.Contains(stack, "bounce.go")
+				strings.Contains(stack, "seelog")
 
 		if isNotInteresting {
 			continue
