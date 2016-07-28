@@ -11,6 +11,7 @@ import (
 	"github.com/lcaballero/walker/searching"
 	app "github.com/lcaballero/walker/web/context"
 	"log"
+	"strconv"
 )
 
 type WebServer struct {
@@ -63,7 +64,23 @@ func Index(ctx *app.Context, cfg conf.Config, searcher *searching.Searcher) echo
 		cfg.ShowFontLocks = c.QueryParam("show-fonts") != ""
 		cfg.ShowQuery = c.QueryParam("show-query") != ""
 
-		fmt.Printf("Searching for: %s\n", cfg.Query)
-		return searcher.Query(c.Response().Writer(), cfg)
+		max := c.QueryParam("max-results")
+		if max != "" {
+			n, err := strconv.Atoi(max)
+			if err == nil {
+				cfg.MaxHits = n
+			}
+		}
+
+		fmt.Printf("searching for: %s\n", cfg.Query)
+		fmt.Printf("max-hits for: %d\n", cfg.MaxHits)
+
+		sr, err := searcher.Query(cfg)
+		if err != nil {
+			return err
+		}
+
+		_, err = c.Response().Write(sr.Render().Bytes())
+		return err
 	}
 }

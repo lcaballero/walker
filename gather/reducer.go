@@ -11,7 +11,9 @@ func NewReducer(inbound chan *Unit) *Reducer {
 	return &Reducer{
 		inbound: inbound,
 		sums: &Reduction{
-			ExtCount: make(map[string]int),
+			IndexInfo: &IndexInfo{
+				ExtCount: make(map[string]int),
+			},
 			Units:    make([]*Unit, 0),
 		},
 	}

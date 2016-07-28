@@ -13,7 +13,6 @@ func Start() {
 	conf := cli.ParseArgs(os.Args...)
 	switch conf.Command {
 	case "indexing":
-		fmt.Println("indexing...")
 		indexing.Indexing(conf)
 	case "searching":
 		s, err := searching.Search(conf)
@@ -21,7 +20,14 @@ func Start() {
 			panic(err)
 		}
 		if conf.HasQuery() {
-			s.Query(os.Stdout, *conf)
+			qr, err := s.Query(*conf)
+			if err != nil {
+				fmt.Println(err)
+			}
+			sr := qr.Render()
+			fmt.Println(sr.Query)
+			fmt.Println(sr.FilesAndHits)
+			fmt.Println(sr.Summary)
 		} else {
 			s.Start()
 			fmt.Println("searching...")

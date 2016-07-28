@@ -11,9 +11,8 @@ import (
 	"strings"
 )
 
-type Reduction struct {
+type IndexInfo struct {
 	ExtCount           map[string]int
-	Units              []*Unit
 	FilesRead          int
 	PathsWalked        int
 	FilePathsCollected int
@@ -23,27 +22,24 @@ type Reduction struct {
 	GoRountineCount    int
 	CpuCount           int
 	ReductionTime      *bench.TimeCapture
-
 	IndexingRoot string
 	AbsoluteRoot string
+}
+
+type Reduction struct {
+	*IndexInfo
+	Units              []*Unit
 }
 
 func (w *Reduction) Report() {
 	fmt.Println("Num CPUs: ", w.CpuCount)
 	fmt.Println("Num Goroutines: ", w.GoRountineCount)
-	fmt.Println()
 	fmt.Println("Skipped Extensions: ", strings.Join(w.ExtensionsSkipped, ", "))
 	fmt.Println("Total Paths Found: ", w.PathsWalked)
 	fmt.Println("Total Paths Collected: ", w.FilePathsCollected)
 	fmt.Println("Total Files Skipped: ", w.SkippedReading)
 	fmt.Println("Total Directories Found: ", w.DirsFound)
-	fmt.Println()
 	fmt.Println("Extensions Collected: ", len(w.ExtCount))
-	//	fmt.Println()
-	//	for k,v := range w.ExtCount {
-	//		fmt.Printf("ext: %s, count: %d\n", k, v)
-	//	}
-	fmt.Println()
 
 	w.ReductionTime.Out(os.Stdout)
 	fmt.Println()
