@@ -5,15 +5,17 @@ import (
 	"github.com/lcaballero/walker/cli"
 	"github.com/lcaballero/walker/indexing"
 	"github.com/lcaballero/walker/searching"
-	web "github.com/lcaballero/walker/web/start"
 	"os"
 )
 
 func Start() {
 	conf := cli.ParseArgs(os.Args...)
+
 	switch conf.Command {
+
 	case "indexing":
 		indexing.Indexing(conf)
+
 	case "searching":
 		s, err := searching.Search(conf)
 		if err != nil {
@@ -32,12 +34,6 @@ func Start() {
 			s.Start()
 			fmt.Println("searching...")
 		}
-	case "web":
-		s, err := searching.Search(conf)
-		if err != nil {
-			panic(err)
-		}
-		web.Start(s, conf)
 
 	default:
 		fmt.Println("default indexing")
