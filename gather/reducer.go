@@ -14,7 +14,7 @@ func NewReducer(inbound chan *Unit) *Reducer {
 			IndexInfo: &IndexInfo{
 				ExtCount: make(map[string]int),
 			},
-			Units:    make([]*Unit, 0),
+			Units: make([]*Unit, 0),
 		},
 	}
 }

@@ -22,13 +22,13 @@ type IndexInfo struct {
 	GoRountineCount    int
 	CpuCount           int
 	ReductionTime      *bench.TimeCapture
-	IndexingRoot string
-	AbsoluteRoot string
+	IndexingRoot       string
+	AbsoluteRoot       string
 }
 
 type Reduction struct {
 	*IndexInfo
-	Units              []*Unit
+	Units []*Unit
 }
 
 func (w *Reduction) Report() {

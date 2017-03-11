@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"github.com/lcaballero/time-capture/bench"
 	"github.com/lcaballero/walker/conf"
-	"io"
 	"github.com/lcaballero/walker/gather"
+	"io"
 )
 
 type QueryResult struct {
@@ -23,10 +23,10 @@ type QueryResult struct {
 
 func NewQueryResult(cf conf.Config, info gather.IndexInfo) *QueryResult {
 	qr := &QueryResult{
-		Timing: bench.Start(),
-		Hits:   make([]HitBounds, 0),
-		Config: cf,
-		IndexInfo: info,
+		Timing:     bench.Start(),
+		Hits:       make([]HitBounds, 0),
+		Config:     cf,
+		IndexInfo:  info,
 		MaxResults: cf.MaxHits,
 	}
 	return qr
