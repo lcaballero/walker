@@ -2,7 +2,6 @@ package gather
 
 import (
 	"fmt"
-	"github.com/lcaballero/time-capture/bench"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -21,10 +20,10 @@ var DefaultFilteredExtensions = []string{
 // final result.  Unfilteerd Units are sent to a reducer that carries out
 // further processing.
 type Walker struct {
-	walkedPaths chan *Unit
 	loadedPaths chan *Unit
 	wait        *sync.WaitGroup
 	total       int
+	fileReader  *FileReader
 }
 
 // NewWalker allocates a Walker instance with a channel to file with
@@ -40,38 +39,34 @@ func NewWalker() *Walker {
 // returns an error if one is encountered during traversal.  It will collect
 // files and then eventually write out a file.
 func (w *Walker) Walk(root string) error {
-	tc := bench.Start()
-
 	reducer := NewReducer(w.loadedPaths)
-	wrapUp := reducer.Start()
+	reducer.Start()
 
-	fr := NewFileReader(runtime.NumCPU(), w.wait.Done, w.loadedPaths)
-	fr.filteredExt = DefaultFilteredExtensions
-	w.walkedPaths = fr.Start()
+	w.fileReader = NewFileReader(runtime.NumCPU(), w.wait.Done, w.loadedPaths)
+	w.fileReader.filteredExt = DefaultFilteredExtensions
+	w.fileReader.Start()
 
 	err := filepath.Walk(root, w.Walking)
 	if err != nil {
 		fmt.Println(err)
 	}
 	w.wait.Wait()
-	wrapUp <- true
+	reducer.Close()
 
-	fr.Close()
-	tc.Stop()
+	w.fileReader.Close()
 
 	cwd, err := os.Getwd()
 	reducer.sums.AbsoluteRoot = cwd
 	reducer.sums.IndexingRoot = root
 	reducer.sums.PathsWalked = w.total
 	reducer.sums.CpuCount = runtime.NumCPU()
-	reducer.sums.GoRountineCount = fr.maxReaders
-	reducer.sums.ReductionTime = tc
-	reducer.sums.ExtensionsSkipped = fr.filteredExt
+	reducer.sums.GoRountineCount = w.fileReader.maxReaders
+	reducer.sums.ExtensionsSkipped = w.fileReader.filteredExt
 	reducer.sums.Report() // output to standard out
 	reducer.sums.Out(os.Stdout)
 	reducer.sums.Write() // make file of the collected information.
 
-	return nil
+	return err
 }
 
 // Handle increments the total count for which it will wait once traversal is
@@ -81,12 +76,12 @@ func (w *Walker) Handle(path string, info os.FileInfo) error {
 	w.total++
 	w.wait.Add(1)
 
-	w.walkedPaths <- &Unit{
+	w.fileReader.Add(&Unit{
 		Path:  path,
 		IsDir: info.IsDir(),
 		Ext:   filepath.Ext(path),
 		Size:  info.Size(),
-	}
+	})
 	return nil
 }
 

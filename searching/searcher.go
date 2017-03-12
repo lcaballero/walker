@@ -13,26 +13,33 @@ import (
 type Searcher struct {
 	reduce *gather.Reduction
 	prefs  Prefs
-	conf   *conf.Config
+	searching   *conf.Searching
 }
 
-func Search(conf *conf.Config) (*Searcher, error) {
-	r, err := LoadReduction(conf.Filename)
+func Search(vals conf.ValueContext) (*Searcher, error) {
+	searching := conf.LoadSearching(vals)
+
+	r, err := LoadReduction(searching.Filename)
 	if err != nil {
 		return nil, err
 	}
+
 	s := &Searcher{
 		reduce: r,
 		prefs:  DefaultPrefs,
-		conf:   conf,
+		searching: &searching,
 	}
 	return s, nil
 }
 
-func (s *Searcher) Query(cf conf.Config) (*QueryResult, error) {
-	qr := NewQueryResult(cf, *s.reduce.IndexInfo)
+func (s *Searcher) HasQuery() bool {
+	return s.searching.HasQuery()
+}
 
-	re, err := regexp.Compile(cf.Query)
+func (s *Searcher) Query() (*QueryResult, error) {
+	qr := NewQueryResult(*s.searching, *s.reduce.IndexInfo)
+
+	re, err := regexp.Compile(s.searching.Query)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +53,7 @@ func (s *Searcher) Query(cf conf.Config) (*QueryResult, error) {
 		for _, match := range matches {
 			qr.HitCount++
 			hit := NewHitBounds(match[0], match[1], unit)
-			if qr.HitCount <= cf.MaxHits {
+			if qr.HitCount <= s.searching.MaxHits {
 				qr.Hits = append(qr.Hits, hit)
 				qr.ResultCount++
 			}
@@ -69,12 +76,11 @@ func (s *Searcher) Start() {
 			continue
 		}
 
-		cfg := *s.conf
-		cfg.Query = strings.TrimRight(line, "\n")
+		s.searching.Query = strings.TrimRight(line, "\n")
 
-		fmt.Printf("%s: %s\n", s.prefs.Echo, cfg)
+		fmt.Printf("%s: %s\n", s.prefs.Echo, s.searching)
 
-		res, err := s.Query(cfg)
+		res, err := s.Query()
 		if err != nil {
 			fmt.Println("Error:", err)
 			continue

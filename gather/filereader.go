@@ -20,7 +20,9 @@ func NewFileReader(
 	done func(),
 	outbound chan *Unit) *FileReader {
 
+	inbound := make(chan *Unit, 100)
 	fr := &FileReader{
+		inbound:    inbound,
 		maxReaders: maxReaders,
 		outbound:   outbound,
 		done:       done,
@@ -28,12 +30,14 @@ func NewFileReader(
 	return fr
 }
 
-func (fr *FileReader) Start() chan *Unit {
-	fr.inbound = make(chan *Unit, 100)
+func (fr *FileReader) Add(unit *Unit) {
+	fr.inbound <- unit
+}
+
+func (fr *FileReader) Start() {
 	for i := 0; i < fr.maxReaders; i++ {
-		go fr.readFile(i, fr.inbound, fr.outbound)
+		go fr.readFile(fr.inbound, fr.outbound)
 	}
-	return fr.inbound
 }
 
 func (fr *FileReader) filter(unit *Unit) bool {
@@ -47,9 +51,9 @@ func (fr *FileReader) filter(unit *Unit) bool {
 
 // readFile takes the id (number) of the thread, a inbound channel to receive
 // new Units and an outbound chanel to send processed Units on.
-func (fr *FileReader) readFile(id int, inbound <-chan *Unit, outbound chan<- *Unit) {
-	for unit := range inbound {
+func (fr *FileReader) readFile(inbound <-chan *Unit, outbound chan<- *Unit) {
 
+	for unit := range inbound {
 		if unit.IsDir {
 			outbound <- unit
 			fr.done()
@@ -76,11 +80,11 @@ func (fr *FileReader) readFile(id int, inbound <-chan *Unit, outbound chan<- *Un
 		outbound <- unit
 		fr.done()
 	}
-	fr.finished(id)
+	fr.finished()
 }
 
-// finished() is called to close down the inbound channel exiting for loop.
-func (fr *FileReader) finished(id int) {
+// finished is called to close down the inbound channel exiting for loop.
+func (fr *FileReader) finished() {
 	fr.closed()
 }
 
