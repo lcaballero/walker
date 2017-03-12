@@ -3,6 +3,7 @@ package searching
 import (
 	"fmt"
 	"github.com/lcaballero/walker/gather"
+	"strings"
 )
 
 type HitFormatter struct {
@@ -19,13 +20,6 @@ func (h HitFormatter) String() string {
 	left := Max(line.Start, h.Hit.Start-h.Window)
 	right := Min(line.End, h.Hit.End+h.Window)
 
-	if h.Hit.Unit.Content[left] == '\n' {
-		left += 1
-	}
-	if h.Hit.Unit.Content[right-1] == '\n' {
-		right -= 1
-	}
-
 	result := fmt.Sprintf("%s %s",
 		h.lead(h.Hit.Start, Min(right, h.Hit.End), line),
 		h.window(line.Number, left, right))
@@ -38,7 +32,9 @@ func (h HitFormatter) match() string {
 }
 
 func (h HitFormatter) window(line, left, right int) string {
-	return string(h.Hit.Unit.Content[left:right])
+	s := string(h.Hit.Unit.Content[left:right])
+	s = strings.TrimRight(s, " \n\r\t")
+	return s
 }
 
 func (h HitFormatter) lead(start, end int, line gather.Line) string {

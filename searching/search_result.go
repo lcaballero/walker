@@ -17,11 +17,11 @@ type QueryResult struct {
 	ResultCount int
 	MaxResults  int
 	Timing      *bench.TimeCapture
-	Config      conf.Config
+	Config      conf.Searching
 	IndexInfo   gather.IndexInfo
 }
 
-func NewQueryResult(cf conf.Config, info gather.IndexInfo) *QueryResult {
+func NewQueryResult(cf conf.Searching, info gather.IndexInfo) *QueryResult {
 	qr := &QueryResult{
 		Timing:     bench.Start(),
 		Hits:       make([]HitBounds, 0),
@@ -75,7 +75,6 @@ func (qr *QueryResult) ShowQuery(out io.Writer) {
 }
 
 func (qr *QueryResult) ShowSummary(out io.Writer) {
-	fmt.Fprintln(out)
 	fmt.Fprintf(out, "Searched: %d files", qr.Searched)
 	fmt.Fprintf(out, "Hits: %d of %d\n", qr.ResultCount, qr.HitCount)
 	fmt.Fprintf(out, "Max Result Count: %d\n", qr.Config.MaxHits)

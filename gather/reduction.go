@@ -3,11 +3,9 @@ package gather
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/lcaballero/time-capture/bench"
 	"github.com/lcaballero/walker/shared/checks"
 	"io"
 	"io/ioutil"
-	"os"
 	"strings"
 )
 
@@ -21,7 +19,6 @@ type IndexInfo struct {
 	ExtensionsSkipped  []string
 	GoRountineCount    int
 	CpuCount           int
-	ReductionTime      *bench.TimeCapture
 	IndexingRoot       string
 	AbsoluteRoot       string
 }
@@ -40,9 +37,8 @@ func (w *Reduction) Report() {
 	fmt.Println("Total Files Skipped: ", w.SkippedReading)
 	fmt.Println("Total Directories Found: ", w.DirsFound)
 	fmt.Println("Extensions Collected: ", len(w.ExtCount))
+	fmt.Println("Searchable Units: ", len(w.Units))
 
-	w.ReductionTime.Out(os.Stdout)
-	fmt.Println()
 	fmt.Println()
 	checks.GoroutinesLeaked()
 }
