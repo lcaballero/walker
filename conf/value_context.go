@@ -22,4 +22,3 @@ func (c ContextLoader) Int(name string, dest *int) {
 func (c ContextLoader) Bool(name string, dest *bool) {
 	*dest = c.ctx.Bool(name)
 }
-

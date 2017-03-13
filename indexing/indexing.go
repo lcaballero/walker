@@ -1,9 +1,9 @@
 package indexing
 
 import (
+	"fmt"
 	"github.com/lcaballero/walker/conf"
 	"github.com/lcaballero/walker/gather"
-	"fmt"
 )
 
 func RunIndexing(vals conf.ValueContext) {

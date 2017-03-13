@@ -11,7 +11,7 @@ type Reducer struct {
 func NewReducer(inbound chan *Unit) *Reducer {
 	return &Reducer{
 		inbound: inbound,
-		closer: make(chan bool),
+		closer:  make(chan bool),
 		sums: &Reduction{
 			IndexInfo: &IndexInfo{
 				ExtCount: make(map[string]int),

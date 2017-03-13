@@ -3,16 +3,16 @@ package start
 import (
 	"fmt"
 	"github.com/lcaballero/walker/cli"
+	"github.com/lcaballero/walker/indexing"
+	"github.com/lcaballero/walker/interactive"
+	"github.com/lcaballero/walker/searching"
 	cmd "gopkg.in/urfave/cli.v2"
 	"os"
-	"github.com/lcaballero/walker/indexing"
-	"github.com/lcaballero/walker/searching"
 )
 
 func Start() {
 	proc := cli.Processing{
 		IndexingAction: func(ctx *cmd.Context) error {
-			fmt.Println("indexing")
 			indexing.RunIndexing(ctx)
 			return nil
 		},
@@ -35,9 +35,12 @@ func Start() {
 			return nil
 		},
 		InteractiveAction: func(ctx *cmd.Context) error {
-			fmt.Println("interactive")
+			interactive.Run(ctx)
 			return nil
 		},
 	}
-	cli.New(proc).Run(os.Args)
+	err := cli.New(proc).Run(os.Args)
+	if err != nil {
+		panic(err)
+	}
 }
