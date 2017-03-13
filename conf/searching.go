@@ -3,9 +3,9 @@ package conf
 import "encoding/json"
 
 type Searching struct {
-	Query         string
-	MaxHits       int
-	Filename   string
+	Query    string
+	MaxHits  int
+	Filename string
 }
 
 func LoadSearching(v ValueContext) Searching {
